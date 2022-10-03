@@ -1,12 +1,14 @@
 --here is where I put the functions, I do it mostly to practice arguments and keeping the main clean
 
-
+-- The variables that indicate the space where the game is going to happen
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
 function love.load()
     -- Using this function I prepare the setup for the game
     -- I really want to pass parameters in here but it seems that I cant, 
     --parameter variables are tretated as tables aparently
     love.window.setMode(
-        1280, 720,{
+        WINDOW_WIDTH, WINDOW_HEIGHT,{
         fullscreen = false,
         resizable = false,
         vsync = true
@@ -19,8 +21,8 @@ function love.draw()
     love.graphics.printf(
         "Hello Pong",
         0,
-        310,
-        1280,
+        WINDOW_HEIGHT / 2,
+        WINDOW_WIDTH,
         "center"
     )
 end
