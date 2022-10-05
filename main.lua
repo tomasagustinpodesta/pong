@@ -1,8 +1,9 @@
---functions and push
--- Push is a file that is on the tutorial
+-- Functions and Push
+-- Push is a library that is on the tutorial for handling 
 func = require("Functions_pong", "push")
 
--- Creating the space for the game
+-- Initializing the game
 love.load()
+
 -- Hello world
 love.draw()

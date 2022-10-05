@@ -4,16 +4,18 @@ push = require "push"
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
--- Virtual resolution
+-- Virtual resolution sizes
 VIRTUAL_WIDTH = 423
 VIRTUAL_HEIGHT = 243
 
 function love.load()
-    -- Using this function I prepare the setup for the game
+    -- Using this function I initialize the game, it is excecuted at the beggining
     -- This is another function for the setup, I used setMode, but this one appears to be better
     
+    -- This function prevents the text to be blurry and also to set it a little more 8bit like
     love.graphics.setDefaultFilter('nearest', 'nearest')
-
+    
+    -- This code sets the screen that we are going to use
     push: setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
         resizable = false,
