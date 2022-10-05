@@ -1,7 +1,6 @@
 --functions and push
-func = require("Functions_pong")
---push = require("push")
-
+-- Push is a file that is on the tutorial
+func = require("Functions_pong", "push")
 
 -- Creating the space for the game
 love.load()
