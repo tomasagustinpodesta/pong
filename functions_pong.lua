@@ -45,11 +45,11 @@ function love.load()
     -- Creating the objects
     player1 = Paddle(10, 30, 5, 20)
     player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20)
-
     ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - -2, 4, 4)
     
+    -- I use randomness to decide the serving player
     servingPlayer = math.random(1, 2)
-    
+
     --Initializing the state of the game
     gameState = "start"
 end
@@ -57,9 +57,11 @@ end
 
 function love.update(dt)
 
+    -- Between games I use this state
     if gameState == "serve" then
         ball.dy = math.random(-50, 50)
 
+        -- Setting where is the ball going depending on the player that scored the point
         if servingPlayer == 1 then
             ball.dx = math.random(140, 200)
         else 
@@ -69,6 +71,8 @@ function love.update(dt)
 
     -- AABB collision detection
     if gameState == "play" then
+
+        -- Collision of the ball with the paddles
         if ball:collides(player1) then
             ball.dx = -ball.dx * 1.03
             ball.x = player1.x + 5
@@ -91,6 +95,7 @@ function love.update(dt)
             end
         end
 
+        -- If the ball collides with the top or bottom edge of the screen
         if ball.y <= 0 then
             ball.y = 0
             ball.dy = -ball.dy
@@ -102,6 +107,7 @@ function love.update(dt)
         end
     end
 
+    -- If the player 2 scores a point
     if ball.x < 0 then
         servingPlayer = 1
         playerScore2 = playerScore2 + 1
@@ -109,6 +115,7 @@ function love.update(dt)
         ball:reset()
     end
 
+    -- If the player 1 scores a point
     if ball.x > VIRTUAL_WIDTH then
         servingPlayer = 2
         playerScore1 = playerScore1 + 1
@@ -171,14 +178,13 @@ function love.draw()
     -- Setting the font I use to put the intro font
     love.graphics.setFont(hello_pong)
 
-    -- This one lets me print, is incredible to look for the values of the variables.
-    -- Still dont know a lot about it, but for now it works for me
-    -- Before I used the Window sizes but now Im using the Virtual ones after using the push library
+    -- The text when the game is about to start
     if gameState == "start" then
         love.graphics.printf("Hello Start State!", 0, 20, VIRTUAL_WIDTH, "center")
         love.graphics.printf("Press enter to start!", 0, 30, VIRTUAL_WIDTH, "center")
     end
 
+    -- The text when the game already started between the "play" states
     if gameState == "serve" then
         love.graphics.printf("Player" .. tostring(servingPlayer) .. "'s serve!", 0, 20, VIRTUAL_WIDTH, "center")
     end
@@ -202,9 +208,11 @@ function love.draw()
     player2:render()
     ball:render()
 
+    -- print that indicates FPS
     love.graphics.setFont(hello_pong)
     love.graphics.setColor(0, 255, 0, 255)
     love.graphics.print("FPS: ".. tostring(love.timer.getFPS()), 10, 10)
+
     -- Stop using the virtual resolution
     push:apply("end")
 end

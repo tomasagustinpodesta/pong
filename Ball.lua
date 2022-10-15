@@ -2,6 +2,7 @@ class = require "class"
 
 Ball = Class{}
 
+-- Create an instance of the ball
 function Ball:init(x, y, width, height)
     -- position
     self.x = x
@@ -16,6 +17,7 @@ function Ball:init(x, y, width, height)
     self.dy = math.random(-50, 50)  
 end
 
+-- Taking the ball back to its initial state
 function Ball:reset()
      -- Initial position
      self.x = VIRTUAL_WIDTH / 2 - 2 
@@ -26,15 +28,18 @@ function Ball:reset()
      self.dy = math.random(-50, 50)
 end
 
+-- Movement of the ball
 function Ball:update(dt)
     self.x = self.x + self.dx * dt
     self.y = self.y + self.dy * dt
 end
 
+-- Printing the ball in the screen
 function Ball:render()
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
 
+-- AABB Collision
 function Ball:collides(paddle)
     if self.x > paddle.x + paddle.width or paddle.x > self.x + self.width then
         return false
