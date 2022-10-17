@@ -15,10 +15,8 @@ VIRTUAL_HEIGHT = 243
 -- Standard paddle movement constant
 PADDLE_SPEED = 200
 
-
+-- Filter, title, fonts, setupScreen, scores, obj instance creation, initial servingplayer.
 function love.load()
-    -- Using this function I initialize the game, it is excecuted at the beggining
-
 
     -- This is another function for the setup, I used setMode, but this one appears to be better
     -- This function prevents the text to be blurry and also to set it a little more 8bit like
@@ -70,31 +68,61 @@ function love.update(dt)
     end
 
     -- AABB collision detection
-    if gameState == "play" then
+        if gameState == "play" then
 
-        -- Collision of the ball with the paddles
-        if ball:collides(player1) then
-            ball.dx = -ball.dx * 1.03
-            ball.x = player1.x + 5
+            -- Collision of the ball with the paddles
+            if ball:collides(player1) then
+                ball.dx = -ball.dx * 1.03
+                ball.x = player1.x + 5
 
-            if ball.dy < 0 then
-                ball.dy = -math.random(10, 150)
-            else
-                ball.dy = math.random(10, 150)
+                if ball.dy < 0 then
+                    ball.dy = -math.random(10, 150)
+                else
+                    ball.dy = math.random(10, 150)
+                end
+            end
+
+            if ball:collides(player2) then
+                ball.dx = -ball.dx * 1.03
+                ball.x = player2.x - 5
+
+                if ball.dy < 0 then
+                    ball.dy = -math.random(10, 150)
+                else
+                    ball.dy = math.random(10, 150)
+                end
+            end
+        
+            -- If the player 2 scores a point
+            if ball.x < 0 then
+                servingPlayer = 1
+                playerScore2 = playerScore2 + 1
+
+                if playerScore2 == 2 then
+                    winningPlayer = 2
+                    gameState = "done"
+                    playerScore2 = 2
+                else 
+                    gameState = "serve"
+                    ball:reset()
+                end
+            end
+            
+
+            -- If the player 1 scores a point
+            if ball.x > VIRTUAL_WIDTH then
+                servingPlayer = 2
+                playerScore1 = playerScore1 + 1
+
+                if playerScore1 == 2 then
+                    winningPlayer = 1
+                    gameState = "done"
+                else    
+                    gameState = "serve"
+                    ball:reset()
+                end
             end
         end
-
-        if ball:collides(player2) then
-            ball.dx = -ball.dx * 1.03
-            ball.x = player2.x - 5
-
-            if ball.dy < 0 then
-                ball.dy = -math.random(10, 150)
-            else
-                ball.dy = math.random(10, 150)
-            end
-        end
-
         -- If the ball collides with the top or bottom edge of the screen
         if ball.y <= 0 then
             ball.y = 0
@@ -105,23 +133,8 @@ function love.update(dt)
             ball.y = VIRTUAL_HEIGHT - 4
             ball.dy = -ball.dy
         end
-    end
 
-    -- If the player 2 scores a point
-    if ball.x < 0 then
-        servingPlayer = 1
-        playerScore2 = playerScore2 + 1
-        gameState = "serve"
-        ball:reset()
-    end
-
-    -- If the player 1 scores a point
-    if ball.x > VIRTUAL_WIDTH then
-        servingPlayer = 2
-        playerScore1 = playerScore1 + 1
-        gameState = "serve"
-        ball:reset()
-    end
+    
         
 
      -- Movement of the Player1
@@ -151,7 +164,6 @@ function love.update(dt)
     player2:update(dt)
 end
 
-
 function love.keypressed(key)
     -- Escape key for leaving the game
     if key == "escape" then
@@ -163,10 +175,21 @@ function love.keypressed(key)
             gameState = 'serve'
         elseif gameState == 'serve' then
             gameState = 'play'
+        elseif gameState == "done" then
+            gameState = "serve"
+            ball:reset()
+
+            playerScore1 = 0
+            playerScore2 = 0
+
+            if winningPlayer == 1 then
+                servingPlayer = 2 
+            else 
+                servingPlayer = 1
+            end
         end
     end
 end
-
 
 function love.draw()
     -- Now we are using the virtual resolution with push:apply
@@ -188,9 +211,16 @@ function love.draw()
     if gameState == "serve" then
         love.graphics.printf("Player" .. tostring(servingPlayer) .. "'s serve!", 0, 20, VIRTUAL_WIDTH, "center")
     end
-    -- Using the font size I use to put the score and the print of the scores and next the player scores
-    love.graphics.setFont(score_Font)
 
+    if gameState == "done" then
+    -- Using the font size I use to put the score and the print of the scores and next the player scores
+        love.graphics.setFont(score_Font)
+        love.graphics.printf("Player" .. tostring(winningPlayer) .. " wins!", 0, 10, VIRTUAL_WIDTH, "center")
+        love.graphics.setFont(hello_pong)
+        love.graphics.printf("Press enter to restart", 0, 40, VIRTUAL_WIDTH, "center")
+    end
+
+    love.graphics.setFont(score_Font)
     love.graphics.print(
         tostring(playerScore1),
         VIRTUAL_WIDTH / 2 - 50,
@@ -217,5 +247,14 @@ function love.draw()
     push:apply("end")
 end
 
+function displayScore()
+    -- draw score on the left and right center of the screen
+    -- need to switch font to draw before actually printing
+    love.graphics.setFont(scoreFont)
+    love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, 
+        VIRTUAL_HEIGHT / 3)
+    love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30,
+        VIRTUAL_HEIGHT / 3)
+end
 --Functions for factorize code
 
