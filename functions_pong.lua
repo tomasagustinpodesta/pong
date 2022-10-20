@@ -22,6 +22,13 @@ function love.load()
     -- This function prevents the text to be blurry and also to set it a little more 8bit like
     love.graphics.setDefaultFilter('nearest', 'nearest')
     
+    -- The sounds of the game
+    sounds = {
+        ["paddle_hit"] = love.audio.newSource("sounds/paddle_hit.wav", "static"),
+        ["score"] = love.audio.newSource("sounds/score.wav", "static"),
+        ["wall_hit"] = love.audio.newSource("sounds/wall_hit.wav", "static")
+    }
+
     love.window.setTitle("Pong")
     math.randomseed(os.time())
 
@@ -52,7 +59,6 @@ function love.load()
     gameState = "start"
 end
 
-
 function love.update(dt)
 
     -- Between games I use this state
@@ -74,7 +80,7 @@ function love.update(dt)
             if ball:collides(player1) then
                 ball.dx = -ball.dx * 1.03
                 ball.x = player1.x + 5
-
+                sounds["paddle_hit"]:play()
                 if ball.dy < 0 then
                     ball.dy = -math.random(10, 150)
                 else
@@ -85,7 +91,7 @@ function love.update(dt)
             if ball:collides(player2) then
                 ball.dx = -ball.dx * 1.03
                 ball.x = player2.x - 5
-
+                sounds["paddle_hit"]:play()
                 if ball.dy < 0 then
                     ball.dy = -math.random(10, 150)
                 else
@@ -95,6 +101,7 @@ function love.update(dt)
         
             -- If the player 2 scores a point
             if ball.x < 0 then
+                sounds["score"]:play()
                 servingPlayer = 1
                 playerScore2 = playerScore2 + 1
 
@@ -102,6 +109,7 @@ function love.update(dt)
                     winningPlayer = 2
                     gameState = "done"
                     playerScore2 = 2
+
                 else 
                     gameState = "serve"
                     ball:reset()
@@ -111,9 +119,10 @@ function love.update(dt)
 
             -- If the player 1 scores a point
             if ball.x > VIRTUAL_WIDTH then
+                sounds["score"]:play()
                 servingPlayer = 2
                 playerScore1 = playerScore1 + 1
-
+                
                 if playerScore1 == 2 then
                     winningPlayer = 1
                     gameState = "done"
@@ -127,11 +136,13 @@ function love.update(dt)
         if ball.y <= 0 then
             ball.y = 0
             ball.dy = -ball.dy
+            sounds["wall_hit"]:play()
         end
 
         if ball.y >= VIRTUAL_HEIGHT - 4 then
             ball.y = VIRTUAL_HEIGHT - 4
             ball.dy = -ball.dy
+            sounds["wall_hit"]:play()
         end
 
     
